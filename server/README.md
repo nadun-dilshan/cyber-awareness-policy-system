@@ -1,6 +1,6 @@
 # ShieldUp API Documentation
 
-**Base URL**: `http://localhost:5000/api` (or your deployed URL in production).
+**Base URL**: `http://localhost:5001/api` (or your deployed URL in production).
 
 **Authentication**: 
 - Use JWT tokens obtained from `/auth/login`.
