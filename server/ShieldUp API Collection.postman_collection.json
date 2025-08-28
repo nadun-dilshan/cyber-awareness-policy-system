@@ -1,0 +1,529 @@
+{
+	"info": {
+		"_postman_id": "c3ea9287-59f7-473c-a4a9-b2f5cbf25728",
+		"name": "ShieldUp API Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47587212"
+	},
+	"item": [
+		{
+			"name": "Authentication & User Management",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin_user\",\n    \"password\": \"securepassword123\",\n    \"role\": \"admin\",\n    \"department\": \"finance\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/register",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Onboarding",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/auth/onboarding",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"onboarding"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Policy Management",
+			"item": [
+				{
+					"name": "Upload Policy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Cybersecurity Policy 2025",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Updated security guidelines",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "<path_to_file>"
+								},
+								{
+									"key": "assignedTo",
+									"value": "[\"user1_id\", \"user2_id\"]",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/policies/upload",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"policies",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Policies",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/policies",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"policies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Acknowledge Policy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"policyId\": \"policy_mongo_id\",\n    \"signature\": \"e-signature123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/policies/acknowledge",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"policies",
+								"acknowledge"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Training & Quizzes",
+			"item": [
+				{
+					"name": "Create Training",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Phishing Awareness\",\n    \"content\": \"https://example.com/training-video\",\n    \"department\": \"service\",\n    \"quizzes\": [\n        {\n            \"question\": \"What is phishing?\",\n            \"options\": [\n                \"Email scam\",\n                \"Network issue\",\n                \"Software update\",\n                \"Hardware failure\"\n            ],\n            \"answer\": \"Email scam\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/trainings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"trainings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trainings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/trainings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"trainings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Quiz",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"trainingId\": \"training_mongo_id\",\n    \"answers\": [\n        \"Email scam\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/trainings/quiz",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"trainings",
+								"quiz"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Compliance Tracking",
+			"item": [
+				{
+					"name": "Get Compliance Report",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/compliance",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"compliance"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Incident Reporting",
+			"item": [
+				{
+					"name": "Submit Incident",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Server Outage",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Server down at 10 AM",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "<path_to_file>"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/incidents",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"incidents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Incidents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/incidents",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"incidents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Incident Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\": \"incident_mongo_id\", \"status\": \"resolved\"}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/incidents/status",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"incidents",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/notifications",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\": \"notification_mongo_id\"}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/notifications/read",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"read"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Audit Logging",
+			"item": [
+				{
+					"name": "Get Audit Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/audits",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"audits"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:5001",
+			"type": "default"
+		}
+	]
+}
