@@ -4,27 +4,29 @@ const User = require('../models/User');
 const AuditLog = require('../models/AuditLog');
 
 const createTraining = async (req, res) => {
-  const { title, content, department, quizzes } = req.body;
-  const training = new Training({ title, content, department, quizzes });
+  const { title, content, assignedDepartments, quizzes } = req.body;
+  const parsedDepartments = JSON.parse(assignedDepartments);
+  const parsedQuizzes = JSON.parse(quizzes);
+  const training = new Training({ title, content, assignedDepartments: parsedDepartments, quizzes: parsedQuizzes });
   await training.save();
   await new AuditLog({ userId: req.user.id, action: 'training_created', details: title }).save();
   res.status(201).json(training);
 };
 
 const getTrainings = async (req, res) => {
-  const trainings = await Training.find({ department: req.user.department });
+  const trainings = await Training.find({ assignedDepartments: req.user.department });
   res.json(trainings);
 };
 
 const submitQuiz = async (req, res) => {
-  const { trainingId, answers } = req.body; // answers: array of user choices
+  const { trainingId, answers } = req.body;
   const training = await Training.findById(trainingId);
   let score = 0;
   training.quizzes.forEach((q, i) => {
     if (q.answer === answers[i]) score++;
   });
   const passed = score >= training.quizzes.length * 0.8; // 80% pass
-  const quizResult = new Quiz({ userId: req.user.id, trainingId, score, passed });
+  const quizResult = new Quiz({ userId: req.user.id, trainingId, score, passed, completedAt: Date.now() });
   await quizResult.save();
 
   // Update user progress
@@ -42,4 +44,9 @@ const submitQuiz = async (req, res) => {
   res.json({ score, passed });
 };
 
-module.exports = { createTraining, getTrainings, submitQuiz };
+const getMyQuizzes = async (req, res) => {
+  const quizzes = await Quiz.find({ userId: req.user.id }).populate('trainingId', 'title').sort({ completedAt: -1 });
+  res.json(quizzes);
+};
+
+module.exports = { createTraining, getTrainings, submitQuiz, getMyQuizzes };
