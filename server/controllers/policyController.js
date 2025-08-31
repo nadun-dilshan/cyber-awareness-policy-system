@@ -40,6 +40,11 @@ const getPolicies = async (req, res) => {
   res.json(policies);
 };
 
+const getAllPolicies = async (req, res) => {
+  const policies = await Policy.find();
+  res.json(policies);
+};
+
 const acknowledgePolicy = async (req, res) => {
   const { policyId, signature } = req.body;
   const ack = new Acknowledgement({ userId: req.user.id, policyId, signature });
@@ -48,4 +53,4 @@ const acknowledgePolicy = async (req, res) => {
   res.json({ msg: 'Policy acknowledged' });
 };
 
-module.exports = { uploadPolicy, getPolicies, acknowledgePolicy };
+module.exports = { uploadPolicy, getPolicies, acknowledgePolicy, getAllPolicies };
