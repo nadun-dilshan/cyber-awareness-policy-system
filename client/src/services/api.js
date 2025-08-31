@@ -68,6 +68,8 @@ export const trainingAPI = {
   createTraining: (data) => api.post('/trainings', data),
   submitQuiz: (data) => api.post('/trainings/quiz', data),
   getMyQuizzes: () => api.get('/trainings/quizzes'),
+  getTrainingResults: (params) => api.get('/trainings/results', { params }),
+  getMyTrainingResults: (params) => api.get('/trainings/my-results', { params }),
 };
 
 // Incident APIs

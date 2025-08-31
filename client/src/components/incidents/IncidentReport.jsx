@@ -34,8 +34,8 @@ const IncidentReport = () => {
   };
 
   return (
-    <div className="card max-w-md mx-auto">
-      <h2 className="text-xl font-semibold mb-4">Report Incident</h2>
+    <div className="max-w-md mx-auto card">
+      <h2 className="mb-4 text-xl font-semibold">Report Incident</h2>
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -55,19 +55,19 @@ const IncidentReport = () => {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="form-input h-32"
+            className="h-32 form-input"
             required
           />
         </div>
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="form-label">Attach File (optional)</label>
           <input
             type="file"
             onChange={handleFileChange}
             className="form-input"
           />
-        </div>
-        <button type="submit" className="btn-primary w-full" disabled={loading}>
+        </div> */}
+        <button type="submit" className="w-full btn-primary" disabled={loading}>
           {loading ? <LoadingSpinner size="sm" /> : 'Submit Incident'}
         </button>
       </form>
