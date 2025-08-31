@@ -30,6 +30,7 @@ const QuizTake = () => {
 
   const handleSubmit = async () => {
     try {
+      console.log(({ trainingId, answers }))
       await execute(() => trainingAPI.submitQuiz({ trainingId, answers }));
       navigate(ROUTES.TRAININGS);
     } catch (err) {
@@ -38,8 +39,8 @@ const QuizTake = () => {
   };
 
   return (
-    <div className="card max-w-2xl mx-auto">
-      <h2 className="text-xl font-semibold mb-4">Take Quiz</h2>
+    <div className="max-w-2xl mx-auto card">
+      <h2 className="mb-4 text-xl font-semibold">Take Quiz</h2>
       {loading && <LoadingSpinner />}
       {error && <p className="text-red-500">{error}</p>}
       {selectedTraining && selectedTraining.quizzes.map((q, index) => (
@@ -59,7 +60,7 @@ const QuizTake = () => {
           ))}
         </div>
       ))}
-      <button onClick={handleSubmit} className="btn-primary w-full" disabled={loading || !selectedTraining}>
+      <button onClick={handleSubmit} className="w-full btn-primary" disabled={loading || !selectedTraining}>
         {loading ? <LoadingSpinner size="sm" /> : 'Submit Quiz'}
       </button>
     </div>

@@ -15,6 +15,7 @@ import TrainingList from './components/training/TrainingList';
 import TrainingCreate from './components/training/TrainingCreate';
 import TrainingView from './components/training/TrainingView';
 import QuizTake from './components/training/QuizTake';
+import TrainingResults from './components/training/TrainingResults';
 import ComplianceReport from './components/compliance/ComplianceReport';
 import IncidentList from './components/incidents/IncidentList';
 import IncidentReport from './components/incidents/IncidentReport';
@@ -44,7 +45,7 @@ const App = () => {
       {isAuthenticated && <Header />}
       <div className="flex flex-1">
         {isAuthenticated && <Sidebar />}
-        <main className="flex-1 bg-gray-100 p-6">
+        <main className="flex-1 p-6 bg-gray-100">
           <Routes>
             {/* Public Routes */}
             <Route path={ROUTES.LOGIN} element={<Login />} />
@@ -120,6 +121,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <QuizTake />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/trainings/results"
+              element={
+                <ProtectedRoute>
+                  <TrainingResults />
                 </ProtectedRoute>
               }
             />
