@@ -3,14 +3,17 @@ import { NavLink } from 'react-router-dom';
 import { useApi } from '../../hooks/useApi';
 import { trainingAPI } from '../../services/api';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { useAuth } from '../../context/AuthContext';
 
 const TrainingList = () => {
   const { loading, error, execute, data: trainings } = useApi();
+  const { isAdmin } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-
+  
   useEffect(() => {
-    execute(() => trainingAPI.getTrainings({ page: currentPage, limit: pageSize }));
+    const endpoint = isAdmin() ? trainingAPI.getAllTrainings : trainingAPI.getTrainings;
+    execute(() => endpoint({ page: currentPage, limit: pageSize }));
   }, [execute, currentPage]);
 
   const handleNextPage = () => {

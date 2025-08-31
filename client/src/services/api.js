@@ -64,6 +64,7 @@ export const policyAPI = {
 // Training APIs
 export const trainingAPI = {
   getTrainings: (params) => api.get('/trainings', { params }),
+  getAllTrainings: (params) => api.get('/trainings/all', { params }),
   createTraining: (data) => api.post('/trainings', data),
   submitQuiz: (data) => api.post('/trainings/quiz', data),
   getMyQuizzes: () => api.get('/trainings/quizzes'),
