@@ -18,6 +18,11 @@ const getTrainings = async (req, res) => {
   res.json(trainings);
 };
 
+const getAllTrainings = async (req, res) => {
+  const trainings = await Training.find();
+  res.json(trainings);
+};
+
 const submitQuiz = async (req, res) => {
   const { trainingId, answers } = req.body;
   const training = await Training.findById(trainingId);
@@ -49,4 +54,4 @@ const getMyQuizzes = async (req, res) => {
   res.json(quizzes);
 };
 
-module.exports = { createTraining, getTrainings, submitQuiz, getMyQuizzes };
+module.exports = { createTraining, getTrainings, submitQuiz, getMyQuizzes, getAllTrainings };
