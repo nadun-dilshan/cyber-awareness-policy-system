@@ -1,16 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useApi } from '../../hooks/useApi';
 import { trainingAPI } from '../../services/api';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { useAuth } from '../../context/AuthContext';
 
 const TrainingView = () => {
   const { trainingId } = useParams();
   const { loading, error, execute, data: training } = useApi();
+  const { isAdmin } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 100;
 
   useEffect(() => {
-    execute(() => trainingAPI.getTrainings()); // Assuming getTrainings fetches all; adjust if single endpoint exists
-  }, [execute, trainingId]);
+    const endpoint = isAdmin() ? trainingAPI.getAllTrainings : trainingAPI.getTrainings;
+    execute(() => endpoint({ page: currentPage, limit: pageSize }));
+  }, [execute, currentPage]);
 
   const selectedTraining = training?.find(t => t._id === trainingId);
 
