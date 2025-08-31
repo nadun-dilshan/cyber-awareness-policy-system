@@ -20,7 +20,7 @@ const login = async (req, res) => {
   if (!user || !(await user.comparePassword(password))) {
     return res.status(401).json({ msg: 'Invalid credentials' });
   }
-  const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ id: user._id, role: user.role, department: user.department }, process.env.JWT_SECRET, { expiresIn: '1h' });
   await new AuditLog({ userId: user._id, action: 'login' }).save();
   res.json({ token, user: { id: user._id, role: user.role, onboardingCompleted: user.onboardingCompleted, department: user.department } });
 };
@@ -33,4 +33,18 @@ const completeOnboarding = async (req, res) => {
   res.json({ msg: 'Onboarding completed' });
 };
 
-module.exports = { register, login, completeOnboarding };
+// Get logged-in user
+const profile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+
+module.exports = { register, login, completeOnboarding, profile };
