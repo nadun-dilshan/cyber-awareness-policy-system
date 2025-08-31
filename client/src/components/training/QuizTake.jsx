@@ -4,16 +4,21 @@ import { useApi } from '../../hooks/useApi';
 import { trainingAPI } from '../../services/api';
 import { ROUTES } from '../../utils/constants';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { useAuth } from '../../context/AuthContext';
 
 const QuizTake = () => {
   const { trainingId } = useParams();
   const [answers, setAnswers] = useState([]);
   const { loading, error, execute, data: training } = useApi();
   const navigate = useNavigate();
+    const { isAdmin } = useAuth();
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 100;
 
-  useEffect(() => {
-    execute(() => trainingAPI.getTrainings()); // Adjust if single endpoint
-  }, [execute, trainingId]);
+    useEffect(() => {
+      const endpoint = isAdmin() ? trainingAPI.getAllTrainings : trainingAPI.getTrainings;
+      execute(() => endpoint({ page: currentPage, limit: pageSize }));
+    }, [execute, currentPage]);
 
   const selectedTraining = training?.find(t => t._id === trainingId);
 
