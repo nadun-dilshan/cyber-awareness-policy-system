@@ -1,6 +1,7 @@
 const Incident = require('../models/Incident');
 const AuditLog = require('../models/AuditLog');
 const Notification = require('../models/Notification');
+const User = require('../models/User');
 
 const submitIncident = async (req, res) => {
   const { title, description } = req.body;
@@ -30,4 +31,9 @@ const updateIncidentStatus = async (req, res) => {
   res.json(incident);
 };
 
-module.exports = { submitIncident, getIncidents, updateIncidentStatus };
+const getMyIncidents = async (req, res) => {
+  const incidents = await Incident.find({ userId: req.user.id }).sort({ createdAt: -1 });
+  res.json(incidents);
+};
+
+module.exports = { submitIncident, getIncidents, updateIncidentStatus, getMyIncidents };

@@ -1,5 +1,5 @@
 const express = require('express');
-const { submitIncident, getIncidents, updateIncidentStatus } = require('../controllers/incidentController');
+const { submitIncident, getIncidents, updateIncidentStatus, getMyIncidents } = require('../controllers/incidentController');
 const authMiddleware = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const multer = require('multer');
@@ -14,5 +14,6 @@ const router = express.Router();
 router.post('/', authMiddleware, upload.single('file'), submitIncident);
 router.get('/', authMiddleware, roleMiddleware(['admin']), getIncidents);
 router.put('/status', authMiddleware, roleMiddleware(['admin']), updateIncidentStatus);
+router.get('/my', authMiddleware, getMyIncidents);
 
 module.exports = router;
