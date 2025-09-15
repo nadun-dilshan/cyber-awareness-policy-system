@@ -79,12 +79,11 @@ const getMyTrainingResults = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-
-    const results = await TrainingResult.find({ user: req.user._id })
-      .populate('training', 'title')
-      .skip(skip)
-      .limit(limit);
-
+    const results = await TrainingResult.find({ user: req.user.id })
+    .populate('training', 'title')
+    .skip(skip)
+    .limit(limit);
+    
     res.json(results);
   } catch (error) {
     res.status(500).json({ msg: 'Server error' });
