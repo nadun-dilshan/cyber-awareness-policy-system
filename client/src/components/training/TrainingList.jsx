@@ -14,7 +14,7 @@ const TrainingList = () => {
   useEffect(() => {
     const endpoint = isAdmin() ? trainingAPI.getAllTrainings : trainingAPI.getTrainings;
     execute(() => endpoint({ page: currentPage, limit: pageSize }));
-  }, [execute, currentPage]);
+  }, [execute, currentPage, isAdmin]);
 
   const handleNextPage = () => {
     if (trainings?.length === pageSize) {
@@ -30,7 +30,7 @@ const TrainingList = () => {
 
   return (
     <div className="card">
-      <h2 className="text-xl font-semibold mb-4">Trainings</h2>
+      <h2 className="mb-4 text-xl font-semibold">Trainings</h2>
       {loading && <LoadingSpinner />}
       {error && <p className="text-red-500">{error}</p>}
       {trainings && trainings.length === 0 && (
@@ -39,10 +39,25 @@ const TrainingList = () => {
       {trainings && trainings.length > 0 && (
         <div className="space-y-4">
           {trainings.map((training) => (
-            <div key={training._id} className="border p-4 rounded-lg">
-              <h3 className="text-lg font-medium">{training.title}</h3>
-              <NavLink to={`/trainings/${training._id}`} className="btn-primary mr-2">View Training</NavLink>
-              <NavLink to={`/trainings/quiz/${training._id}`} className="btn-secondary">Take Quiz</NavLink>
+            <div key={training._id} className="p-4 border rounded-lg shadow-sm">
+              <h3 className="mb-2 text-xl font-bold text-gray-800">
+                {training.title || training.name || "Untitled Training"}
+              </h3>
+              {training.description && (
+                <p className="mb-2 text-sm text-gray-600">{training.description}</p>
+              )}
+              <NavLink
+                to={`/trainings/${training._id}`}
+                className="mr-2 btn-primary"
+              >
+                View Training
+              </NavLink>
+              <NavLink
+                to={`/trainings/quiz/${training._id}`}
+                className="btn-secondary"
+              >
+                Take Quiz
+              </NavLink>
             </div>
           ))}
           <div className="flex justify-between mt-4">
