@@ -55,8 +55,13 @@ export const userAPI = {
 export const policyAPI = {
   getPolicies: (params) => api.get("/policies", { params }),
   getAllPolicies: (params) => api.get("/policies/all", { params }),
+  getPolicy: (id) => api.get(`/policies/${id}`),
   uploadPolicy: (formData) =>
     api.post("/policies/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+  updatePolicy: (id, formData) =>
+    api.put(`/policies/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
   acknowledgePolicy: (data) => api.post("/policies/acknowledge", data),
