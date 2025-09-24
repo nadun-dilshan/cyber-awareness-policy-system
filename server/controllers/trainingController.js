@@ -1,21 +1,32 @@
-const Training = require('../models/Training');
-const Quiz = require('../models/Quiz');
-const User = require('../models/User');
-const AuditLog = require('../models/AuditLog');
-const TrainingResult = require('../models/TrainingResult');
+const Training = require("../models/Training");
+const Quiz = require("../models/Quiz");
+const User = require("../models/User");
+const AuditLog = require("../models/AuditLog");
+const TrainingResult = require("../models/TrainingResult");
 
 const createTraining = async (req, res) => {
   const { title, content, assignedDepartments, quizzes } = req.body;
   const parsedDepartments = JSON.parse(assignedDepartments);
   const parsedQuizzes = JSON.parse(quizzes);
-  const training = new Training({ title, content, assignedDepartments: parsedDepartments, quizzes: parsedQuizzes });
+  const training = new Training({
+    title,
+    content,
+    assignedDepartments: parsedDepartments,
+    quizzes: parsedQuizzes,
+  });
   await training.save();
-  await new AuditLog({ userId: req.user.id, action: 'training_created', details: title }).save();
+  await new AuditLog({
+    userId: req.user.id,
+    action: "training_created",
+    details: title,
+  }).save();
   res.status(201).json(training);
 };
 
 const getTrainings = async (req, res) => {
-  const trainings = await Training.find({ assignedDepartments: req.user.department });
+  const trainings = await Training.find({
+    assignedDepartments: req.user.department,
+  });
   res.json(trainings);
 };
 
@@ -51,10 +62,11 @@ const getAllTrainings = async (req, res) => {
 // };
 
 const getMyQuizzes = async (req, res) => {
-  const quizzes = await Quiz.find({ userId: req.user.id }).populate('trainingId', 'title').sort({ completedAt: -1 });
+  const quizzes = await Quiz.find({ userId: req.user.id })
+    .populate("trainingId", "title")
+    .sort({ completedAt: -1 });
   res.json(quizzes);
 };
-
 
 const getTrainingResults = async (req, res) => {
   try {
@@ -63,14 +75,14 @@ const getTrainingResults = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const results = await TrainingResult.find()
-      .populate('user', 'username')
-      .populate('training', 'title')
+      .populate("user", "username")
+      .populate("training", "title")
       .skip(skip)
       .limit(limit);
 
     res.json(results);
   } catch (error) {
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: "Server error" });
   }
 };
 
@@ -80,13 +92,13 @@ const getMyTrainingResults = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     const results = await TrainingResult.find({ user: req.user.id })
-    .populate('training', 'title')
-    .skip(skip)
-    .limit(limit);
-    
+      .populate("training", "title")
+      .skip(skip)
+      .limit(limit);
+
     res.json(results);
   } catch (error) {
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: "Server error" });
   }
 };
 
@@ -95,14 +107,14 @@ const getMyTrainingResults = async (req, res) => {
 const submitQuiz = async (req, res) => {
   const { trainingId, answers } = req.body;
 
-  if (!(trainingId)) {
+  if (!trainingId) {
     return res.status(400).json({ msg: "Invalid trainingId" });
   }
 
   try {
     const training = await Training.findById(trainingId);
     if (!training) {
-      return res.status(404).json({ msg: 'Training not found' });
+      return res.status(404).json({ msg: "Training not found" });
     }
 
     // Calculate score
@@ -119,16 +131,47 @@ const submitQuiz = async (req, res) => {
       training: trainingId,
       score,
       passed,
-      completedAt: new Date()
+      completedAt: new Date(),
     });
 
     await result.save();
-    res.json({ msg: 'Quiz submitted successfully', score, passed });
+    res.json({ msg: "Quiz submitted successfully", score, passed });
   } catch (error) {
     console.error(error); // log actual error
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: "Server error" });
   }
 };
 
+const deleteTraining = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const training = await Training.findById(id);
 
-module.exports = { createTraining, getTrainings, submitQuiz, getMyQuizzes, getAllTrainings, getTrainingResults, getMyTrainingResults };
+    if (!training) {
+      return res.status(404).json({ msg: "Training not found" });
+    }
+
+    await Training.findByIdAndDelete(id);
+    await new AuditLog({
+      userId: req.user.id,
+      action: "training_deleted",
+      details: `Training deleted: ${training.title}`,
+    }).save();
+
+    res.json({ msg: "Training deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+
+module.exports = {
+  createTraining,
+  getTrainings,
+  submitQuiz,
+  getMyQuizzes,
+  getAllTrainings,
+  getTrainingResults,
+  getMyTrainingResults,
+  deleteTraining,
+};

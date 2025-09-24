@@ -1,30 +1,58 @@
-import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { useApi } from '../../hooks/useApi';
-import { trainingAPI } from '../../services/api';
-import LoadingSpinner from '../common/LoadingSpinner';
-import { useAuth } from '../../context/AuthContext';
+import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { useApi } from "../../hooks/useApi";
+import { trainingAPI } from "../../services/api";
+import LoadingSpinner from "../common/LoadingSpinner";
+import { useAuth } from "../../context/AuthContext";
 
 const TrainingList = () => {
   const { loading, error, execute, data: trainings } = useApi();
   const { isAdmin } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-  
+
   useEffect(() => {
-    const endpoint = isAdmin() ? trainingAPI.getAllTrainings : trainingAPI.getTrainings;
+    const endpoint = isAdmin()
+      ? trainingAPI.getAllTrainings
+      : trainingAPI.getTrainings;
     execute(() => endpoint({ page: currentPage, limit: pageSize }));
   }, [execute, currentPage, isAdmin]);
 
   const handleNextPage = () => {
     if (trainings?.length === pageSize) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  const handleDelete = async (trainingId, trainingTitle) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete the training "${trainingTitle}"? This action cannot be undone.`
+      )
+    ) {
+      try {
+        console.log("Attempting to delete training with ID:", trainingId);
+        const response = await trainingAPI.deleteTraining(trainingId);
+        console.log("Delete response:", response);
+        alert("Training deleted successfully!");
+        // Refresh the training list after successful deletion
+        const endpoint = isAdmin()
+          ? trainingAPI.getAllTrainings
+          : trainingAPI.getTrainings;
+        execute(() => endpoint({ page: currentPage, limit: pageSize }));
+      } catch (err) {
+        console.error("Error deleting training:", err);
+        console.error("Error details:", err.response?.data || err.message);
+        alert(
+          `Error deleting training: ${err.response?.data?.msg || err.message}`
+        );
+      }
     }
   };
 
@@ -33,6 +61,7 @@ const TrainingList = () => {
       <h2 className="mb-4 text-xl font-semibold">Trainings</h2>
       {loading && <LoadingSpinner />}
       {error && <p className="text-red-500">{error}</p>}
+
       {trainings && trainings.length === 0 && (
         <p className="text-gray-500">No trainings assigned.</p>
       )}
@@ -44,20 +73,37 @@ const TrainingList = () => {
                 {training.title || training.name || "Untitled Training"}
               </h3>
               {training.description && (
-                <p className="mb-2 text-sm text-gray-600">{training.description}</p>
+                <p className="mb-2 text-sm text-gray-600">
+                  {training.description}
+                </p>
               )}
-              <NavLink
-                to={`/trainings/${training._id}`}
-                className="mr-2 btn-primary"
-              >
-                View Training
-              </NavLink>
-              <NavLink
-                to={`/trainings/quiz/${training._id}`}
-                className="btn-secondary"
-              >
-                Take Quiz
-              </NavLink>
+              <div className="flex flex-wrap gap-2">
+                <NavLink
+                  to={`/trainings/${training._id}`}
+                  className="btn-primary"
+                >
+                  View Training
+                </NavLink>
+                <NavLink
+                  to={`/trainings/quiz/${training._id}`}
+                  className="btn-secondary"
+                >
+                  Take Quiz
+                </NavLink>
+                {isAdmin() && (
+                  <button
+                    onClick={() =>
+                      handleDelete(
+                        training._id,
+                        training.title || training.name || "Untitled Training"
+                      )
+                    }
+                    className="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
             </div>
           ))}
           <div className="flex justify-between mt-4">
